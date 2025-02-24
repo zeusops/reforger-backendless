@@ -6,11 +6,11 @@ podman run \
   --name=reforger-nobackend \
   ghcr.io/gehock/arma-reforger:latest \
   /reforger/ArmaReforgerServer \
-    -adminPassword salasana \
-    -profile /home/profile \
-    -server worlds/GameMaster/GM_Arland.ent \
     -bindIP 0.0.0.0 \
     -bindPort 2001 \
     -maxFPS 60 \
     -logLevel normal \
-    -logStats 60000
+    -logStats 60000 \
+    -adminPassword salasana \
+    -profile /home/profile \
+    -server worlds/GameMaster/GM_Arland.ent \
