@@ -13,10 +13,10 @@ def test_reforger_config(datadir: Path):
     config = json.load(open(datadir / "config.json"))
     reforger_config = ReforgerConfig(**config)
     assert (
-        reforger_config.game["scenarioId"]
+        reforger_config.game.scenarioId
         == "{BC0DB173B6FF24EA}Missions/OperationTrebuchet.conf"
     )
-    assert reforger_config.game["mods"][0]["name"] == "No Backend Scenario Loader"
+    assert reforger_config.game.mods[0].name == "No Backend Scenario Loader"
 
     ta = TypeAdapter(ReforgerConfig)
     try:
@@ -28,7 +28,5 @@ def test_reforger_config(datadir: Path):
         data = f.read()
     obj = ta.validate_json(data)
     print(type(obj))
-    assert (
-        obj.game["scenarioId"] == "{BC0DB173B6FF24EA}Missions/OperationTrebuchet.conf"
-    )
-    assert obj.game["mods"][0]["name"] == "No Backend Scenario Loader"
+    assert obj.game.scenarioId == "{BC0DB173B6FF24EA}Missions/OperationTrebuchet.conf"
+    assert obj.game.mods[0].name == "No Backend Scenario Loader"

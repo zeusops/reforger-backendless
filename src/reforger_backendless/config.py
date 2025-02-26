@@ -4,19 +4,19 @@ Generated using https://github.com/ikornaselur/dict-typer with manual modificati
 """
 
 from enum import Enum
-from typing import Required
 
-from pydantic import BaseModel
-from typing_extensions import NotRequired, TypedDict
+from pydantic import BaseModel, ConfigDict
 
 __all__ = ["ReforgerConfig"]
 
 
-class A2s(TypedDict):
+class A2s(BaseModel):
     """https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#a2s_2"""
 
+    model_config = ConfigDict(extra="forbid")
+
     address: str
-    port: NotRequired[int]
+    port: int = 17777
 
 
 class RconPermission(Enum):
@@ -26,75 +26,88 @@ class RconPermission(Enum):
     monitor = "monitor"
 
 
-class Rcon(TypedDict, total=False):
+class Rcon(BaseModel):
     """https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#rcon_2"""
 
-    address: Required[str]
-    port: int
-    password: Required[str]
-    permission: Required[RconPermission]
-    blacklist: list
-    whitelist: list
+    model_config = ConfigDict(extra="forbid")
+
+    address: str
+    port: int = 19999
+    password: str
+    permission: RconPermission
+    blacklist: list = []
+    whitelist: list = []
 
 
-class MissionHeader(TypedDict):
+class MissionHeader(BaseModel):
     """https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#missionHeader"""
 
-    pass
+    model_config = ConfigDict(extra="allow")
 
 
-class GameProperties(TypedDict, total=False):
+class GameProperties(BaseModel):
     """https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#gameProperties_2"""
 
-    serverMaxViewDistance: int
-    serverMinGrassDistance: int
-    networkViewDistance: int
-    disableThirdPerson: bool
-    fastValidation: bool
-    battlEye: bool
-    VONDisableUI: bool
-    VONDisableDirectSpeechUI: bool
+    model_config = ConfigDict(extra="forbid")
+
+    serverMaxViewDistance: int = 1600
+    serverMinGrassDistance: int = 0
+    fastValidation: bool = True
+    networkViewDistance: int = 1500
+    battlEye: bool = True
+    disableThirdPerson: bool = False
+    VONDisableUI: bool = False
+    VONDisableDirectSpeechUI: bool = False
+    VONCanTransmitCrossFaction: bool = False
     missionHeader: MissionHeader
 
 
-class Mods(TypedDict):
+class Mods(BaseModel):
     """https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#mods"""
+
+    model_config = ConfigDict(extra="forbid")
 
     modId: str
     name: str
-    version: NotRequired[str]
-    required: NotRequired[bool]
+    version: str = ""
+    required: bool = True
 
 
-class Game(TypedDict):
+class Game(BaseModel):
     """https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#game_2"""
+
+    model_config = ConfigDict(extra="forbid")
 
     name: str
     password: str
     passwordAdmin: str
     admins: list[str]
     scenarioId: str
-    maxPlayers: NotRequired[int]
-    visible: NotRequired[bool]
-    crossPlatform: NotRequired[bool]
-    supportedPlatforms: NotRequired[list[str]]
+    maxPlayers: int = 64
+    visible: bool = True
+    crossPlatform: bool = False
+    supportedPlatforms: list[str] = ["PLATFORM_PC"]
     gameProperties: GameProperties
-    modsRequiredByDefault: NotRequired[bool]
-    mods: list[Mods]
+    modsRequiredByDefault: bool = True
+    mods: list[Mods] = []
 
 
-class JoinQueue(TypedDict):
+class JoinQueue(BaseModel):
     """https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#joinQueue"""
 
-    maxSize: NotRequired[int]
+    model_config = ConfigDict(extra="forbid")
+
+    maxSize: int = 0
 
 
-class Operating(TypedDict, total=False):
+class Operating(BaseModel):
     """https://community.bistudio.com/wiki/Arma_Reforger:Server_Config#operating_2"""
 
-    lobbyPlayerSynchronise: bool
-    joinQueue: JoinQueue
-    disableNavmeshStreaming: list[str]
+    model_config = ConfigDict(extra="allow")
+
+    lobbyPlayerSynchronise: bool = True
+    joinQueue: JoinQueue | None = None
+    disableNavmeshStreaming: list[str] | bool = False
     # and many more
 
 
@@ -104,6 +117,8 @@ class ReforgerConfig(BaseModel):
     Ref: https://community.bistudio.com/wiki/Arma_Reforger:Server_Config
     """
 
+    model_config = ConfigDict(extra="forbid")
+
     bindAddress: str = "0.0.0.0"
     bindPort: int = 2001
     publicAddress: str
@@ -111,4 +126,4 @@ class ReforgerConfig(BaseModel):
     a2s: A2s
     rcon: Rcon | None = None
     game: Game
-    operating: Operating = {}
+    operating: Operating | None = None
