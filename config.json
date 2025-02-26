@@ -1,0 +1,36 @@
+{
+    "bindAddress": "0.0.0.0",
+    "bindPort": 2002,
+    "publicAddress": "65.109.54.219",
+    "publicPort": 2002,
+    "a2s": {
+        "address": "0.0.0.0",
+        "port": 17777
+    },
+    "game": {
+        "name": "Zeusops Reforger",
+        "password": "zeusops",
+        "passwordAdmin": "zeusops",
+        "admins": [],
+        "scenarioId": "{59AD59368755F41A}Missions/21_GM_Eden.conf",
+        "maxPlayers": 64,
+        "visible": true,
+        "supportedPlatforms": [
+            "PLATFORM_PC"
+        ],
+        "gameProperties": {
+            "serverMaxViewDistance": 2500,
+            "serverMinGrassDistance": 150,
+            "networkViewDistance": 1000,
+            "disableThirdPerson": true,
+            "fastValidation": true,
+            "battlEye": true,
+            "missionHeader": {}
+        },
+        "mods": [
+            {
+                "modId": "6324F7124A9768FB"
+            }
+        ]
+    }
+}
