@@ -1,3 +1,4 @@
+#!/bin/bash
 podman run \
   --network=host \
   -v /opt/reforger/installation:/reforger \

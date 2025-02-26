@@ -1,6 +1,7 @@
+#!/bin/bash
 podman run \
   --network=host \
-  -v $(pwd):/mnt \
+  -v "$(pwd):/mnt" \
   --rm \
   -it \
   --name=steamcmd \

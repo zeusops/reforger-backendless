@@ -1,3 +1,4 @@
+#!/bin/bash
 podman run \
   --network=host \
   -v /opt/reforger/installation:/reforger \
@@ -13,4 +14,4 @@ podman run \
     -logStats 60000 \
     -adminPassword salasana \
     -profile /home/profile \
-    $@
+    "$@"

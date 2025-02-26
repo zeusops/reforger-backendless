@@ -1,32 +1,20 @@
 #!/bin/bash
-
-set -euo pipefail
-
-CONFIG="${CONFIG:-/opt/reforger/installation/Configs/config.json}"
-addons="$(jq -r '.game.mods[].modId' $CONFIG | tr '\n' ',')"
-if [ "${1:-}" = "-addons" ]; then
-  echo $addons
-  exit
-fi
-scenario_id="$(jq -r .game.scenarioId $CONFIG)"
 podman run \
   --network=host \
   -v /opt/reforger/installation:/reforger \
   -v /opt/reforger/profile:/home/profile \
   --rm \
   --name=reforger-nobackend \
-  ghcr.io/zeusops/arma-reforger:latest \
+  ghcr.io/gehock/arma-reforger:latest \
   /reforger/ArmaReforgerServer \
     -bindIP 0.0.0.0 \
     -bindPort 2001 \
-    -noSound \
     -maxFPS 60 \
     -logLevel normal \
     -logStats 60000 \
     -adminPassword salasana \
     -profile /home/profile \
-    -addons "$addons" \
+    -addons 6324F7124A9768FB \
     -addonsDir /reforger/workshop/addons \
     -server worlds/NoBackendScenarioLoader.ent \
-    -scenarioId "$scenario_id" \
-    $@
+    -scenarioId "{ECC61978EDCC2B5A}Missions/23_Campaign.conf" \

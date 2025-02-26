@@ -1,3 +1,4 @@
+#!/bin/bash
 podman run \
   --network=host \
   -v /opt/reforger/installation:/reforger \
@@ -12,8 +13,6 @@ podman run \
     -logLevel normal \
     -logStats 60000 \
     -adminPassword salasana \
-    -profile /home/profile \
-    -addons 6324F7124A9768FB \
     -addonsDir /reforger/workshop/addons \
-    -server worlds/NoBackendScenarioLoader.ent \
-    -scenarioId {ECC61978EDCC2B5A}Missions/23_Campaign.conf \
+    -profile /home/profile \
+    -server worlds/GameMaster/GM_Arland.ent \
