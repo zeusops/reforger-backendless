@@ -11,7 +11,7 @@ podman run \
   -v /opt/reforger/profile:/home/profile \
   --rm \
   --name=reforger-nobackend \
-  ghcr.io/gehock/arma-reforger:latest \
+  ghcr.io/zeusops/arma-reforger:latest \
   /reforger/ArmaReforgerServer \
     -bindIP 0.0.0.0 \
     -bindPort 2001 \
