@@ -30,33 +30,38 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
             "without the BI backend"
         ),
     )
-    parser.add_argument(
+    parser.set_defaults(func=lambda _: parser.print_help(sys.stderr))
+
+    subparsers = parser.add_subparsers()
+    run = subparsers.add_parser("run", help="Run the server")
+    run.set_defaults(func=_run)
+    run.add_argument(
         "--config",
         "-c",
         help="Path to the configuration file",
         default="config.json",
     )
-    parser.add_argument(
+    run.add_argument(
         "--podman",
         "-p",
         help="Use podman to run the server",
         action="store_true",
     )
-    parser.add_argument(
+    run.add_argument(
         "--dry-run",
         "-n",
         help="Print the command to run without executing it",
         action="store_true",
     )
-    parser.add_argument(
+    run.add_argument(
         "--extra-args", "-e", help="Extra arguments to pass to the server", default=""
     )
-    parser.add_argument(
+    run.add_argument(
         "--reforger-dir",
         help="Path to the reforger installation directory",
         default=REFORGER_DIR,
     )
-    parser.add_argument(
+    run.add_argument(
         "--profile-dir",
         help="Path to the profile directory",
         default=PROFILE_DIR,
@@ -69,7 +74,11 @@ def cli(arguments: list[str] | None = None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments)
-    main(
+    args.func(args)
+
+
+def _run(args: argparse.Namespace):
+    run(
         args.config,
         args.podman,
         args.dry_run,
@@ -79,7 +88,7 @@ def cli(arguments: list[str] | None = None):
     )
 
 
-def main(
+def run(
     config_path: str,
     podman: bool,
     dry_run: bool,
