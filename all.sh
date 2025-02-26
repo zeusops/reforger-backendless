@@ -1,6 +1,10 @@
+#!/bin/bash
+
+set -euo pipefail
+
 CONFIG="${CONFIG:-/opt/reforger/installation/Configs/config.json}"
 addons="$(jq -r '.game.mods[].modId' $CONFIG | tr '\n' ',')"
-if [ "$1" = "-addons" ]; then
+if [ "${1:-}" = "-addons" ]; then
   echo $addons
   exit
 fi
