@@ -1,9 +1,10 @@
-ADDONS="$(jq -r '.game.mods[].modId' /opt/reforger/installation/Configs/config.json | tr '\n' ',')"
+CONFIG="${CONFIG:-/opt/reforger/installation/Configs/config.json}"
+addons="$(jq -r '.game.mods[].modId' $CONFIG | tr '\n' ',')"
 if [ "$1" = "-addons" ]; then
-  echo $ADDONS
+  echo $addons
   exit
 fi
-SCENARIO_ID="$(jq -r .game.scenarioId /opt/reforger/installation/Configs/config.json)"
+scenario_id="$(jq -r .game.scenarioId $CONFIG)"
 podman run \
   --network=host \
   -v /opt/reforger/installation:/reforger \
@@ -20,8 +21,8 @@ podman run \
     -logStats 60000 \
     -adminPassword salasana \
     -profile /home/profile \
-    -addons "$ADDONS" \
+    -addons "$addons" \
     -addonsDir /reforger/workshop/addons \
     -server worlds/NoBackendScenarioLoader.ent \
-    -scenarioId "$SCENARIO_ID" \
+    -scenarioId "$scenario_id" \
     $@
