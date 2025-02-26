@@ -12,7 +12,7 @@
         "password": "zeusops",
         "passwordAdmin": "zeusops",
         "admins": [],
-        "scenarioId": "{59AD59368755F41A}Missions/21_GM_Eden.conf",
+        "scenarioId": "{BC0DB173B6FF24EA}Missions/OperationTrebuchet.conf",
         "maxPlayers": 64,
         "visible": true,
         "supportedPlatforms": [
