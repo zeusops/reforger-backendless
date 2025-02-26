@@ -18,6 +18,7 @@ class BackendlessServer:
         self,
         reforger_config_path: str,
         podman: bool = False,
+        dry_run: bool = False,
         extra_args: str = "",
         reforger_dir: str = REFORGER_DIR,
         profile_dir: str = PROFILE_DIR,
@@ -27,6 +28,7 @@ class BackendlessServer:
 
         self.reforger_config = get_config(reforger_config_path)
         self.podman = podman
+        self.dry_run = dry_run
         self.extra_args = extra_args
         self.reforger_dir = reforger_dir
         self.profile_dir = profile_dir
@@ -92,6 +94,10 @@ class BackendlessServer:
         command.extend(self._get_args())
         command.extend(self.extra_args.split())
 
-        logging.info("Executing command: %s", command)
+        logging.info("Command to execute: %s", command)
+
+        if self.dry_run:
+            logging.info("Dry run enabled, exiting without executing command")
+            return
 
         subprocess.run(command)

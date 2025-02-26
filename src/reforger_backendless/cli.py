@@ -43,6 +43,12 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
         action="store_true",
     )
     parser.add_argument(
+        "--dry-run",
+        "-n",
+        help="Print the command to run without executing it",
+        action="store_true",
+    )
+    parser.add_argument(
         "--extra-args", "-e", help="Extra arguments to pass to the server", default=""
     )
     parser.add_argument(
@@ -66,6 +72,7 @@ def cli(arguments: list[str] | None = None):
     main(
         args.config,
         args.podman,
+        args.dry_run,
         args.extra_args,
         args.reforger_dir,
         args.profile_dir,
@@ -75,6 +82,7 @@ def cli(arguments: list[str] | None = None):
 def main(
     config_path: str,
     podman: bool,
+    dry_run: bool,
     extra_args: str,
     reforger_dir: str,
     profile_dir: str,
@@ -87,5 +95,7 @@ def main(
             logging.error(f"Error: The {name} directory '{directory}' does not exist.")
             sys.exit(1)
 
-    server = BackendlessServer(config_path, podman, extra_args, reforger_dir, profile_dir)
+    server = BackendlessServer(
+        config_path, podman, dry_run, extra_args, reforger_dir, profile_dir
+    )
     server.start()
