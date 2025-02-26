@@ -127,3 +127,11 @@ class ReforgerConfig(BaseModel):
     rcon: Rcon | None = None
     game: Game
     operating: Operating | None = None
+
+
+def get_config(filename: str) -> ReforgerConfig:
+    """Get the default configuration for Arma Reforger server."""
+    with open(filename, "r") as file:
+        config_data = file.read()
+
+    return ReforgerConfig.model_validate_json(config_data)

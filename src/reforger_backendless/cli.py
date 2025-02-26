@@ -3,6 +3,8 @@
 import argparse
 import sys
 
+from reforger_backendless.backendless_server import BackendlessServer
+
 
 def parse_arguments(args: list[str]) -> argparse.Namespace:
     """Parse generic arguments, given as parameters
@@ -22,7 +24,21 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
             "without the BI backend"
         ),
     )
-    parser.add_argument("foo", help="Some parameter")
+    parser.add_argument(
+        "--config",
+        "-c",
+        help="Path to the configuration file",
+        default="config.json",
+    )
+    parser.add_argument(
+        "--podman",
+        "-p",
+        help="Use podman to run the server",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--extra-args", "-e", help="Extra arguments to pass to the server", default=""
+    )
     return parser.parse_args(args)
 
 
@@ -31,9 +47,10 @@ def cli(arguments: list[str] | None = None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments)
-    main(args.foo)
+    main(args.config, args.podman, args.extra_args)
 
 
-def main(foo):
+def main(config_path: str, podman: bool, extra_args: str):
     """Run the program's main command"""
-    print(f"Foo is: {foo}")
+    server = BackendlessServer(config_path, podman, extra_args)
+    server.start()
