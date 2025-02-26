@@ -19,6 +19,8 @@ pytest = "7.*"
 pytest-cov = "4.*"
 # Clearer assertion failures (colorful diff)
 pytest-clarity = "1.*"
+pydantic = "^2.10.6"
+pytest-datadir = "^1.6.1"
 
 
 [tool.poetry.group.docs.dependencies]
