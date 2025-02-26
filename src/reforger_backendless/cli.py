@@ -1,9 +1,15 @@
 """Command line entrypoint for reforger-backendless"""
 
 import argparse
+import logging
+import os
 import sys
 
-from reforger_backendless.backendless_server import BackendlessServer
+from reforger_backendless.backendless_server import (
+    PROFILE_DIR,
+    REFORGER_DIR,
+    BackendlessServer,
+)
 
 
 def parse_arguments(args: list[str]) -> argparse.Namespace:
@@ -39,6 +45,16 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--extra-args", "-e", help="Extra arguments to pass to the server", default=""
     )
+    parser.add_argument(
+        "--reforger-dir",
+        help="Path to the reforger installation directory",
+        default=REFORGER_DIR,
+    )
+    parser.add_argument(
+        "--profile-dir",
+        help="Path to the profile directory",
+        default=PROFILE_DIR,
+    )
     return parser.parse_args(args)
 
 
@@ -47,10 +63,29 @@ def cli(arguments: list[str] | None = None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments)
-    main(args.config, args.podman, args.extra_args)
+    main(
+        args.config,
+        args.podman,
+        args.extra_args,
+        args.reforger_dir,
+        args.profile_dir,
+    )
 
 
-def main(config_path: str, podman: bool, extra_args: str):
+def main(
+    config_path: str,
+    podman: bool,
+    extra_args: str,
+    reforger_dir: str,
+    profile_dir: str,
+):
     """Run the program's main command"""
-    server = BackendlessServer(config_path, podman, extra_args)
+    logging.basicConfig(level=logging.INFO)
+
+    for directory, name in [(reforger_dir, "reforger"), (profile_dir, "profile")]:
+        if not os.path.exists(directory):
+            logging.error(f"Error: The {name} directory '{directory}' does not exist.")
+            sys.exit(1)
+
+    server = BackendlessServer(config_path, podman, extra_args, reforger_dir, profile_dir)
     server.start()

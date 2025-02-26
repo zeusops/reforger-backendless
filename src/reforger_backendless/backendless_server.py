@@ -5,15 +5,22 @@ import subprocess
 
 from reforger_backendless.config import get_config
 
-PROFILE_DIR = "/home/profile"
-REFORGER_DIR = "/reforger"
+REFORGER_DIR = "/opt/reforger/installation"
+PROFILE_DIR = "/opt/reforger/profile"
+CONTAINER_PROFILE_DIR = "/home/profile"
+CONTAINER_REFORGER_DIR = "/reforger"
 
 
 class BackendlessServer:
     """A server configuration for Arma Reforger without backend"""
 
     def __init__(
-        self, reforger_config_path: str, podman: bool = False, extra_args: str = ""
+        self,
+        reforger_config_path: str,
+        podman: bool = False,
+        extra_args: str = "",
+        reforger_dir: str = REFORGER_DIR,
+        profile_dir: str = PROFILE_DIR,
     ):
         """Initialize the server configuration"""
         logging.basicConfig(level=logging.INFO)
@@ -21,23 +28,28 @@ class BackendlessServer:
         self.reforger_config = get_config(reforger_config_path)
         self.podman = podman
         self.extra_args = extra_args
+        self.reforger_dir = reforger_dir
+        self.profile_dir = profile_dir
 
     def _start_command(self) -> list[str]:
         """Return the start command"""
         if self.podman:
-            return [
+            command = [
                 "podman",
                 "run",
                 "--network=host",
                 "-v",
-                "/opt/reforger/installation:/reforger",
+                f"{self.reforger_dir}:{CONTAINER_REFORGER_DIR}",
                 "-v",
-                "/opt/reforger/profile:/home/profile",
+                f"{self.profile_dir}:{CONTAINER_PROFILE_DIR}",
                 "--rm",
                 "--name=reforger-backendless",
                 "ghcr.io/zeusops/arma-reforger:latest",
-                "/reforger/ArmaReforgerServer",
+                f"{CONTAINER_REFORGER_DIR}/ArmaReforgerServer",
             ]
+            self.reforger_dir = CONTAINER_REFORGER_DIR
+            self.profile_dir = CONTAINER_PROFILE_DIR
+            return command
 
         return ["./ArmaReforgerServer"]
 
@@ -58,11 +70,11 @@ class BackendlessServer:
             "-adminPassword",
             self.reforger_config.game.passwordAdmin,
             "-profile",
-            PROFILE_DIR,
+            self.profile_dir,
             "-addons",
             ",".join([mod.modId for mod in self.reforger_config.game.mods]),
             "-addonsDir",
-            f"{REFORGER_DIR}/workshop/addons",
+            f"{self.reforger_dir}/workshop/addons",
             "-server",
             "worlds/NoBackendScenarioLoader.ent",
             "-scenarioId",
