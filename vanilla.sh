@@ -13,4 +13,4 @@ podman run \
     -logStats 60000 \
     -adminPassword salasana \
     -profile /home/profile \
-    -server worlds/GameMaster/GM_Arland.ent \
+    -server worlds/MP/CTI_Campaign_Arland.ent
