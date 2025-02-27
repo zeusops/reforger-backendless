@@ -54,6 +54,12 @@ def parse_arguments(args: list[str]) -> argparse.Namespace:
         action="store_true",
     )
     run.add_argument(
+        "--host-network",
+        "-H",
+        help="Use the host network for podman",
+        action="store_true",
+    )
+    run.add_argument(
         "--extra-args", "-e", help="Extra arguments to pass to the server", default=""
     )
     run.add_argument(
@@ -82,6 +88,7 @@ def _run(args: argparse.Namespace):
         args.config,
         args.podman,
         args.dry_run,
+        args.host_network,
         args.extra_args,
         args.reforger_dir,
         args.profile_dir,
@@ -92,6 +99,7 @@ def run(
     config_path: str,
     podman: bool,
     dry_run: bool,
+    host_network: bool,
     extra_args: str,
     reforger_dir: str,
     profile_dir: str,
@@ -104,7 +112,15 @@ def run(
             logging.error(f"Error: The {name} directory '{directory}' does not exist.")
             sys.exit(1)
 
+    logging.info(f"{host_network=}")
+
     server = BackendlessServer(
-        config_path, podman, dry_run, extra_args, reforger_dir, profile_dir
+        config_path,
+        podman,
+        dry_run,
+        host_network,
+        extra_args,
+        reforger_dir,
+        profile_dir,
     )
     server.start()

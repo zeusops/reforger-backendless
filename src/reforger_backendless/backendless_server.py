@@ -19,6 +19,7 @@ class BackendlessServer:
         reforger_config_path: str,
         podman: bool = False,
         dry_run: bool = False,
+        host_network: bool = False,
         extra_args: str = "",
         reforger_dir: str = REFORGER_DIR,
         profile_dir: str = PROFILE_DIR,
@@ -29,31 +30,69 @@ class BackendlessServer:
         self.reforger_config = get_config(reforger_config_path)
         self.podman = podman
         self.dry_run = dry_run
+        self.host_network = host_network
         self.extra_args = extra_args
         self.reforger_dir = reforger_dir
         self.profile_dir = profile_dir
 
+        self.bind_port = self.reforger_config.bindPort
+
     def _start_command(self) -> list[str]:
         """Return the start command"""
-        if self.podman:
-            command = [
-                "podman",
-                "run",
-                "--network=host",
-                "-v",
-                f"{self.reforger_dir}:{CONTAINER_REFORGER_DIR}",
-                "-v",
-                f"{self.profile_dir}:{CONTAINER_PROFILE_DIR}",
-                "--rm",
-                "--name=reforger-backendless",
-                "ghcr.io/zeusops/arma-reforger:latest",
-                f"{CONTAINER_REFORGER_DIR}/ArmaReforgerServer",
-            ]
-            self.reforger_dir = CONTAINER_REFORGER_DIR
-            self.profile_dir = CONTAINER_PROFILE_DIR
-            return command
+        default_port = int(self.reforger_config.model_fields.get("bindPort").default)
+        if self.host_network and self.bind_port != default_port:
+            error = (
+                "Error: Must be running in Podman mode and the host network "
+                f"must not be used when the bind port is not {default_port}."
+            )
+            logging.error(error)
+            raise ValueError(error)
 
-        return ["./ArmaReforgerServer"]
+        if not self.podman:
+            return ["./ArmaReforgerServer"]
+
+        if self.host_network:
+            network_command = ["--network=host"]
+        else:
+            default_a2s_port = int(
+                self.reforger_config.a2s.model_fields.get("port").default
+            )
+            network_command = [
+                "-p",
+                f"{self.bind_port}:{default_port}/udp",
+                "-p",
+                f"{self.reforger_config.a2s.port}:{default_a2s_port}/udp",
+            ]
+            # Bind to the default port inside the container
+            self.bind_port = default_port
+
+            if self.reforger_config.rcon:
+                default_rcon_port = int(
+                    self.reforger_config.rcon.model_fields.get("port").default
+                )
+                network_command.extend(
+                    [
+                        "-p",
+                        f"{self.reforger_config.rcon.port}:{default_rcon_port}/udp",
+                    ]
+                )
+
+        command = [
+            "podman",
+            "run",
+            *network_command,
+            "-v",
+            f"{self.reforger_dir}:{CONTAINER_REFORGER_DIR}",
+            "-v",
+            f"{self.profile_dir}:{CONTAINER_PROFILE_DIR}",
+            "--rm",
+            "--name=reforger-backendless",
+            "ghcr.io/zeusops/arma-reforger:latest",
+            f"{CONTAINER_REFORGER_DIR}/ArmaReforgerServer",
+        ]
+        self.reforger_dir = CONTAINER_REFORGER_DIR
+        self.profile_dir = CONTAINER_PROFILE_DIR
+        return command
 
     def _get_args(self) -> list[str]:
         """Get the command line arguments"""
@@ -61,7 +100,7 @@ class BackendlessServer:
             "-bindIP",
             self.reforger_config.bindAddress,
             "-bindPort",
-            str(self.reforger_config.bindPort),
+            str(self.bind_port),
             "-noSound",
             "-maxFPS",
             "60",
