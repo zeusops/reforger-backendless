@@ -2,7 +2,7 @@
   "json.schemas": [
     {
       "fileMatch": [
-        "/config.json"
+        "/config*.json"
       ],
       "url": "https://raw.githubusercontent.com/Gehock/ARSCFG/refs/heads/master/src/schema/ReforgerServerConfigSchema.json"
     }

@@ -40,7 +40,7 @@ class BackendlessServer:
     def _start_command(self) -> list[str]:
         """Return the start command"""
         default_port = int(self.reforger_config.model_fields.get("bindPort").default)
-        if self.host_network and self.bind_port != default_port:
+        if self.host_network and (self.bind_port != default_port or not self.podman):
             error = (
                 "Error: Must be running in Podman mode and the host network "
                 f"must not be used when the bind port is not {default_port}."
@@ -139,4 +139,4 @@ class BackendlessServer:
             logging.info("Dry run enabled, exiting without executing command")
             return
 
-        subprocess.run(command)
+        subprocess.run(command)  # pragma: no cover

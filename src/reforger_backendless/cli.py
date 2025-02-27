@@ -1,6 +1,7 @@
 """Command line entrypoint for reforger-backendless"""
 
 import argparse
+import enum
 import logging
 import os
 import sys
@@ -10,6 +11,13 @@ from reforger_backendless.backendless_server import (
     REFORGER_DIR,
     BackendlessServer,
 )
+
+
+class Exit(enum.IntEnum):
+    """Exit codes for the program"""
+
+    SUCCESS = 0
+    FAILURE = 1
 
 
 def parse_arguments(args: list[str]) -> argparse.Namespace:
@@ -80,11 +88,11 @@ def cli(arguments: list[str] | None = None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments)
-    args.func(args)
+    return args.func(args)
 
 
 def _run(args: argparse.Namespace):
-    run(
+    return run(
         args.config,
         args.podman,
         args.dry_run,
@@ -110,7 +118,7 @@ def run(
     for directory, name in [(reforger_dir, "reforger"), (profile_dir, "profile")]:
         if not os.path.exists(directory):
             logging.error(f"Error: The {name} directory '{directory}' does not exist.")
-            sys.exit(1)
+            return Exit.FAILURE
 
     logging.info(f"{host_network=}")
 
@@ -124,3 +132,4 @@ def run(
         profile_dir,
     )
     server.start()
+    return Exit.SUCCESS
