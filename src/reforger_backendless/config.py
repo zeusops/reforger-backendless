@@ -68,9 +68,18 @@ class Mods(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     modId: str
+    """GUID of the mod"""
     name: str
-    version: str = ""
+    """This parameter does not do anything and is only used as sort of comment,
+    with human readable name of the mod. """
+    version: str | None = None
+    """The version mod parameter is optional. If it missing, the latest mod
+    version will be used."""
     required: bool = True
+    """Is optional parameter to specify if this addon is required for server to
+    start. If set to false then addon will be automatically removed from list
+    with warning in logs if it cannot be for some reason downloaded from the
+    Workshop. """
 
 
 class Game(BaseModel):
