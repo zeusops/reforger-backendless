@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "reforger_backendless"
-description = " A set of helper scripts to run an Arma Reforger server without the BI backend"
+description = "A set of helper scripts to run an Arma Reforger server without the BI backend"
 authors = ["Zeusops <sami.v.laine@gmail.com>"]
 readme = "README.md"
 version = "0.1.0"

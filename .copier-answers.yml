@@ -3,8 +3,7 @@ _commit: v1.8.1
 _src_path: gh:OverkillGuy/python-template
 author_email: sami.v.laine@gmail.com
 author_name: Zeusops
-description: ' A set of helper scripts to run an Arma Reforger server without the
-    BI backend'
+description: A set of helper scripts to run an Arma Reforger server without the BI backend
 dynamic_versioning: false
 package_name: reforger_backendless
 project_name: Backendless Reforger Server

@@ -1,6 +1,6 @@
 # Backendless Reforger Server
 
- A set of helper scripts to run an Arma Reforger server without the BI backend
+A set of helper scripts to run an Arma Reforger server without the BI backend
 
 Requires Python 3.12
 
